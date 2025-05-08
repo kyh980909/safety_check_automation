@@ -2,11 +2,14 @@ import requests
 import json
 from bs4 import BeautifulSoup
 import re
+from datetime import datetime
 
-lab_no = '' # 실험실 번호
-login_id = '' # 아이디
-login_pw = '' # 비밀번호
-today_date = '' # 다음과 같은 포맷으로 날짜 입력 '2025-05-07 오전 12:00:00'
+lab_no = '39061' # 실험실 번호
+login_id = '82210002' # 아이디
+login_pw = 'Ayongho_98' # 비밀번호
+today_date = datetime.now().strftime('%Y-%m-%d 오전 12:00:00') # 현재 날짜와 시간을 '2025-05-07 오전 12:00:00' 포맷으로 설정
+
+print(f"Processing date: {today_date}")
 
 safety_check_url = f'https://safety.mju.ac.kr/Safety/LabCheckDayly/Index?LabNo={lab_no}'
 login_page_url = 'https://sso1.mju.ac.kr/login.do?redirect_uri=http://safety.mju.ac.kr/sso/LoginCheck_SSO.aspx'
@@ -14,7 +17,7 @@ user_check_url = 'https://sso1.mju.ac.kr/mju/userCheck.do'
 ajax_login_url = 'https://sso1.mju.ac.kr/login/ajaxActionLogin2.do'
 sso_login_url = 'https://sso1.mju.ac.kr/oauth2/token2.do'
 session_url = 'https://safety.mju.ac.kr/sso/SSO_OK.aspx'
-           
+        
 login_info = {"id":login_id, "passwrd":login_pw}
 sso_login_info = {"user_id":login_id, "user_pwd":login_pw, "client_id2":"", "redirect_uri": "http://safety.mju.ac.kr/sso/LoginCheck_SSO.aspx"}
 
@@ -83,9 +86,9 @@ with requests.Session() as s:
     ]
 
     test = s.post('https://safety.mju.ac.kr/Safety/LabCheckDayly/CreateOnLineAjx',
-                  data=check_data,
-                  cookies=check_cookies,
-                  headers=headers)
+                    data=check_data,
+                    cookies=check_cookies,
+                    headers=headers)
 
     print(test.headers)
     print(test.status_code)
