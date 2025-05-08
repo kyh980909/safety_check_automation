@@ -1,13 +1,39 @@
 import requests
-import json
-from bs4 import BeautifulSoup
 import re
 from datetime import datetime
+from workalendar.asia import SouthKorea
+from dotenv import load_dotenv
+import os
 
-lab_no = '39061' # 실험실 번호
-login_id = '82210002' # 아이디
-login_pw = 'Ayongho_98' # 비밀번호
-today_date = datetime.now().strftime('%Y-%m-%d 오전 12:00:00') # 현재 날짜와 시간을 '2025-05-07 오전 12:00:00' 포맷으로 설정
+# .env 파일에서 환경 변수 로드
+load_dotenv()
+
+# 환경 변수에서 민감한 정보 가져오기
+lab_no = os.getenv('LAB_NO')
+login_id = os.getenv('LOGIN_ID')
+login_pw = os.getenv('LOGIN_PW')
+
+# 필수 환경 변수 체크
+if not all([lab_no, login_id, login_pw]):
+    raise ValueError("필수 환경 변수가 설정되지 않았습니다. .env 파일을 확인해주세요.")
+
+# 현재 날짜 정보 가져오기
+current_date = datetime.now()
+today_date = current_date.strftime('%Y-%m-%d 오전 12:00:00')
+
+# 공휴일 체크
+kr_calendar = SouthKorea()
+is_holiday = kr_calendar.is_holiday(current_date.date())
+is_weekend = current_date.weekday() >= 5  # 5: 토요일, 6: 일요일
+
+# 날짜 타입에 따른 메시지 출력
+if is_holiday:
+    holiday_name = kr_calendar.get_holiday_label(current_date.date())
+    print(f"오늘은 공휴일입니다: {holiday_name}")
+elif is_weekend:
+    print("오늘은 주말입니다.")
+else:
+    print("오늘은 평일입니다.")
 
 print(f"Processing date: {today_date}")
 
